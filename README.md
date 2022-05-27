@@ -1,4 +1,4 @@
-# liberty_compass
+# Liberty Compass
 
 Triangle Political Compass
 
