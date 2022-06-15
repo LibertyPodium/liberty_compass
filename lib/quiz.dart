@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:liberty_compass/question.dart';
 
 enum QuizVariable {
@@ -22,17 +24,17 @@ class Quiz {
     final progressive = score[QuizVariable.progressive]!;
     final authoritarian = conservative + progressive;
     final total = authoritarian + libertarian;
-    final max = questions.length * 2;
+    final maxPossible = questions.length * 2;
 
-    if (libertarian == max) {
+    if (libertarian == maxPossible) {
       return 0.0;
     }
 
-    if (conservative == max || progressive == max) {
+    if (conservative == maxPossible || progressive == maxPossible) {
       return 1.0;
     }
 
-    return ((total / 3) + (authoritarian * 0.9) - libertarian) / total;
+    return max(min(((total / 3) + (authoritarian * 0.9) - libertarian) / total, 1.0), 0.0);
   }
 
   double get authoritarianScore => _getAuthoritarianScore();
