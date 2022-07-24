@@ -1,4 +1,28 @@
-import 'package:liberty_compass/quiz.dart';
+import 'dart:html' as html;
+
+import 'package:flutter/material.dart';
+
+import './quiz/quiz.dart';
+
+void devOnlyPickRandomAnswers(Quiz quiz) {
+    while (quiz.currentQuestion != null) {
+        quiz.currentQuestion!.answers.shuffle();
+        quiz.submitAnswer(quiz.currentQuestion!.answers.first);
+    }
+}
+
+String getUrlToResultsPage(String id) {
+    return '${html.window.location.href}?results=$id';
+}
+
+void setUrlToResultsPage(String id) {
+    // TODO Navigator.push etc
+    html.window.history.pushState(
+        null,
+        'Results | ${html.document.title}',
+        getUrlToResultsPage(id)
+    );
+}
 
 String getAnswerContent(int index) {
   switch (index) {

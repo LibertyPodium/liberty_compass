@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "299773437881",
+    "project_id": "liberty-compass",
+    "storage_bucket": "liberty-compass.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:299773437881:android:f814ba060f5173c20bb868",
+        "android_client_info": {
+          "package_name": "com.example.liberty_compass"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "299773437881-5rj0fphffbmo9i1t87ab21sei2r6kfri.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyASTk2rVURQOi9Ml4iRWEnr-UiSOVtbs1A"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "299773437881-5rj0fphffbmo9i1t87ab21sei2r6kfri.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
