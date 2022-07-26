@@ -1,39 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="f6f674ad-8c3f-4891-8dc1-da650701f56d" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/assets/assets/fonts/Roboto/Roboto-Black.ttf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/assets/fonts/Roboto/Roboto-BlackItalic.ttf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/assets/fonts/Roboto/Roboto-Bold.ttf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/assets/fonts/Roboto/Roboto-BoldItalic.ttf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/assets/fonts/Roboto/Roboto-Italic.ttf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/assets/fonts/Roboto/Roboto-Light.ttf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/assets/fonts/Roboto/Roboto-LightItalic.ttf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/assets/fonts/Roboto/Roboto-Medium.ttf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/assets/fonts/Roboto/Roboto-MediumItalic.ttf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/assets/fonts/Roboto/Roboto-Regular.ttf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/assets/fonts/Roboto/Roboto-Thin.ttf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/assets/fonts/Roboto/Roboto-ThinItalic.ttf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/assets/images/drugs.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/assets/images/extra.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/assets/images/github.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/assets/images/gun.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/assets/images/intro.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/assets/images/logo.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/assets/images/parent.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/assets/images/passport.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/assets/images/question.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/assets/images/religion.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/assets/images/security.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/assets/images/share.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/assets/images/speech.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/assets/images/success.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/assets/images/taxes.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/assets/images/torch.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/assets/images/vaccine.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/assets/quiz_questions.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/index.html" afterDir="false" />
-    </list>
+    <list default="true" id="f6f674ad-8c3f-4891-8dc1-da650701f56d" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -114,7 +82,7 @@
       <workItem from="1658874027226" duration="4000" />
       <workItem from="1658874034127" duration="32000" />
       <workItem from="1658874069169" duration="113000" />
-      <workItem from="1658874237475" duration="34000" />
+      <workItem from="1658874237475" duration="334000" />
     </task>
     <servers />
   </component>
