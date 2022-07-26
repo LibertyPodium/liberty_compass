@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
-import 'package:liberty_compass/quiz/quiz.dart';
 
+import '../../quiz/quiz.dart';
+import '../../quiz/sentiment.dart';
+import '../listing.dart';
 import '../section.dart';
 
 class ParentalRights extends StatelessWidget {
@@ -17,17 +18,12 @@ class ParentalRights extends StatelessWidget {
         String descriptionWithSentiment = '';
 
         if (quiz.sentiment.parentalRights == 0) {
-            descriptionWithSentiment = 'You are neutral towards the use of recreational drugs. You believe in a balance between personal responsibility and public safety.';
+            descriptionWithSentiment = 'You are neutral towards parental rights. You believe in a balance between parents and their communities.';
         } else if (quiz.sentiment.parentalRights < 0) {
-            descriptionWithSentiment = 'You are generally disagreeable towards prioritizing security over freedom. You believe that your rights trump those of the government.';
+            descriptionWithSentiment = 'You are generally disagreeable towards parental rights. You believe that the child\'s community should decide what is best.';
         } else {
-            descriptionWithSentiment = 'You are generally favorable towards individual freedom. You believe in an individualistic approach to society.';
+            descriptionWithSentiment = 'You are generally favorable towards parental rights. You believe in allowing parents to raise their children how they see fit.';
         }
-
-        final questions = quiz.sentiment.parentRightsQuestions;
-        final positiveQuestions = questions.where((question) => question.markedAnswer!.index > 4).toList(growable: false);
-        final negativeQuestions = questions.where((question) => question.markedAnswer!.index < 4).toList(growable: false);
-        final shouldRenderSpacer = positiveQuestions.isNotEmpty || negativeQuestions.isNotEmpty;
 
         return Section(
             icon: 'assets/images/parent.png',
@@ -43,45 +39,10 @@ class ParentalRights extends StatelessWidget {
                         height: 1.5
                     )
                 ),
-                SizedBox(height: shouldRenderSpacer ? 8 : 0),
-                ...positiveQuestions.map((question) => Container(
-                    padding: EdgeInsets.only(top: 8),
-                    child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                            Icon(Icons.thumb_up, color: Colors.lightBlue, size: 20,),
-                            SizedBox(width: 8),
-                            Flexible(child: SelectableText(
-                                question.content,
-                                style: TextStyle(
-                                    color: Colors.white.withOpacity(0.6),
-                                    fontSize: 12,
-                                    height: 1.33,
-                                    overflow: TextOverflow.ellipsis,
-                                )
-                            ))
-                        ]
-                    )
-                )),
-                ...negativeQuestions.map((question) => Container(
-                    padding: EdgeInsets.only(top: 8),
-                    child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                            Icon(Icons.thumb_down, color: Colors.white.withOpacity(0.66), size: 20,),
-                            SizedBox(width: 8),
-                            Flexible(child: SelectableText(
-                                question.content,
-                                style: TextStyle(
-                                    color: Colors.white.withOpacity(0.6),
-                                    fontSize: 12,
-                                    height: 1.33,
-                                    overflow: TextOverflow.ellipsis,
-                                )
-                            ))
-                        ]
-                    )
-                ))
+                Listing(
+                    sentimentQuestions: quiz.sentiment.parentRightsQuestions,
+                    sentimentKind: SentimentKind.parentalRights
+                )
             ]
         );
     }

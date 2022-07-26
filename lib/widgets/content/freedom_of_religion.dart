@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
-import 'package:liberty_compass/quiz/quiz.dart';
 
+import '../../quiz/quiz.dart';
+import '../../quiz/sentiment.dart';
+import '../listing.dart';
 import '../section.dart';
 
 class FreedomOfReligion extends StatelessWidget {
@@ -14,20 +15,15 @@ class FreedomOfReligion extends StatelessWidget {
 
     @override
     Widget build(BuildContext context) {
-        String descriptionWithSentiment = '';
+        String descriptionWithSentiment;
 
         if (quiz.sentiment.freedomOfReligion == 0) {
-            descriptionWithSentiment = 'You are neutral towards the use of recreational drugs. You believe in a balance between personal responsibility and public safety.';
+            descriptionWithSentiment = 'You are neutral towards religious freedom. You believe that certain belief systems may be harmful to society.';
         } else if (quiz.sentiment.freedomOfReligion < 0) {
-            descriptionWithSentiment = 'You are generally disagreeable towards prioritizing security over freedom. You believe that your rights trump those of the government.';
+            descriptionWithSentiment = 'You are generally disagreeable towards religious freedom. You believe that religion is a mostly negative impact on society.';
         } else {
-            descriptionWithSentiment = 'You are generally favorable towards individual freedom. You believe in an individualistic approach to society.';
+            descriptionWithSentiment = 'You are generally favorable towards religious freedom. You believe in allowing others to think for themselves.';
         }
-
-        final questions = quiz.sentiment.religionQuestions;
-        final positiveQuestions = questions.where((question) => question.markedAnswer!.index > 4).toList(growable: false);
-        final negativeQuestions = questions.where((question) => question.markedAnswer!.index < 4).toList(growable: false);
-        final shouldRenderSpacer = positiveQuestions.isNotEmpty || negativeQuestions.isNotEmpty;
 
         return Section(
             icon: 'assets/images/religion.png',
@@ -43,45 +39,10 @@ class FreedomOfReligion extends StatelessWidget {
                         height: 1.5
                     )
                 ),
-                SizedBox(height: shouldRenderSpacer ? 8 : 0),
-                ...positiveQuestions.map((question) => Container(
-                    padding: EdgeInsets.only(top: 8),
-                    child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                            Icon(Icons.thumb_up, color: Colors.lightBlue, size: 20,),
-                            SizedBox(width: 8),
-                            Flexible(child: SelectableText(
-                                question.content,
-                                style: TextStyle(
-                                    color: Colors.white.withOpacity(0.6),
-                                    fontSize: 12,
-                                    height: 1.33,
-                                    overflow: TextOverflow.ellipsis,
-                                )
-                            ))
-                        ]
-                    )
-                )),
-                ...negativeQuestions.map((question) => Container(
-                    padding: EdgeInsets.only(top: 8),
-                    child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                            Icon(Icons.thumb_down, color: Colors.white.withOpacity(0.66), size: 20,),
-                            SizedBox(width: 8),
-                            Flexible(child: SelectableText(
-                                question.content,
-                                style: TextStyle(
-                                    color: Colors.white.withOpacity(0.6),
-                                    fontSize: 12,
-                                    height: 1.33,
-                                    overflow: TextOverflow.ellipsis,
-                                )
-                            ))
-                        ]
-                    )
-                ))
+                Listing(
+                    sentimentQuestions: quiz.sentiment.religionQuestions,
+                    sentimentKind: SentimentKind.freedomOfReligion
+                )
             ]
         );
     }

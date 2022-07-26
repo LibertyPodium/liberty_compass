@@ -1,8 +1,10 @@
-import 'dart:html' as html;
 import 'dart:math' as math;
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:liberty_compass/utils.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
 import '../quiz/answer.dart';
 import '../quiz/quiz.dart';
@@ -23,30 +25,34 @@ import './header.dart';
 final GlobalKey genKey = GlobalKey();
 
 class Layout extends StatelessWidget {
-  final AnimationController loadingAnimationController;
   final Quiz quiz;
   final bool started;
   final bool ready;
-  final bool saving;
-  final void Function() onStart;
-  final void Function(Answer) onAnswerSelect;
-  final void Function(Answer) onAnswerSubmit;
-  final void Function(BuildContext) onShare;
   final Answer? selectedAnswer;
   final DocumentReference? savedDocument;
+  final AnimationController loadingAnimation;
+  final void Function() onStart;
+  final void Function(BuildContext) onReset;
+  final void Function(BuildContext) onShare;
+  final void Function(BuildContext) onHelp;
+  final void Function(BuildContext) onCopy;
+  final void Function(Answer) onAnswerSelect;
+  final void Function(Answer) onAnswerSubmit;
 
   const Layout({
-      required this.loadingAnimationController,
       required this.quiz,
       required this.started,
       required this.ready,
-      required this.saving,
-      required this.onStart,
-      required this.onAnswerSubmit,
-      required this.onAnswerSelect,
-      required this.onShare,
       required this.selectedAnswer,
       required this.savedDocument,
+      required this.loadingAnimation,
+      required this.onReset,
+      required this.onStart,
+      required this.onShare,
+      required this.onHelp,
+      required this.onCopy,
+      required this.onAnswerSubmit,
+      required this.onAnswerSelect,
       Key? key,
   }) : super(key: key);
 
@@ -54,6 +60,7 @@ class Layout extends StatelessWidget {
   Widget build(BuildContext context) {
     final mediaQuery = MediaQuery.of(context);
     final isMobile = mediaQuery.size.width < 600;
+    final isMini = mediaQuery.size.width < 300;
 
     if (!ready) {
         return Container(
@@ -62,11 +69,11 @@ class Layout extends StatelessWidget {
             height: double.infinity,
             child: Center(
                 child: AnimatedBuilder(
-                    animation: loadingAnimationController,
+                    animation: loadingAnimation,
                     builder: (_, child) {
                         return Transform.rotate(
                             origin: const Offset(0, -15),
-                            angle: loadingAnimationController.value * math.pi * 2,
+                            angle: loadingAnimation.value * math.pi * 2,
                             child: child
                         );
                     },
@@ -80,11 +87,14 @@ class Layout extends StatelessWidget {
       return Scaffold(
         appBar: AppBar(
             title: Header(
+                quiz: quiz,
                 ready: ready,
                 started: started,
-                quiz: quiz,
-                results: savedDocument
+                results: savedDocument,
+                onStart: onStart,
+                onReset: onReset,
             ),
+            titleSpacing: 0,
             shadowColor: Colors.transparent,
         ),
         body: Container(
@@ -112,25 +122,28 @@ class Layout extends StatelessWidget {
     }
 
     if (quiz.currentQuestion == null) {
-      final sectionGap = isMobile ? 48.0 : 72.0;
+      final sectionGap = isMobile ? 48.0 : 64.0;
 
       return Scaffold(
         appBar: AppBar(
           title: Header(
+            quiz: quiz,
             ready: ready,
             started: started,
-            quiz: quiz,
-            results: savedDocument
+            results: savedDocument,
+            onStart: onStart,
+            onReset: onReset,
           ),
+          titleSpacing: 0,
           shadowColor: Colors.transparent,
         ),
         floatingActionButton: FloatingActionButton(
-          onPressed: () {},
+          onPressed: () => onHelp(context),
           backgroundColor: const Color(0xFFAD65FF),
           elevation: 0,
           child: const Icon(
               Icons.question_mark,
-              color: Color(0xFF262A35),
+              color: Colors.black,
           )
         ),
         body: Container(
@@ -146,30 +159,36 @@ class Layout extends StatelessWidget {
                       color: Colors.black
                   ),
                   child: Center(
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        SelectableText(
-                          'VIEWING RESULTS',
-                          style: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.w300
-                          ),
+                    child: MouseRegion(
+                      cursor: SystemMouseCursors.click,
+                      child: GestureDetector(
+                        onTap: () => onCopy(context),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              isMini ? 'RESULTS' : 'VIEWING RESULTS',
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w300
+                              ),
+                            ),
+                            Icon(
+                                Icons.arrow_right_alt,
+                                color: Colors.white,
+                                size: 20
+                            ),
+                            SizedBox(width: 2),
+                            Text(
+                              savedDocument?.id ?? 'unknown',
+                              style: TextStyle(
+                                color: Colors.green,
+                                fontWeight: FontWeight.w400,
+                              ),
+                            ),
+                          ],
                         ),
-                        Icon(
-                          Icons.arrow_right_alt,
-                          color: Colors.white,
-                          size: 20
-                        ),
-                        SizedBox(width: 2),
-                        SelectableText(
-                          savedDocument?.id ?? 'unknown',
-                          style: TextStyle(
-                              color: Colors.green,// Color(0xFFAD65FF),
-                              fontWeight: FontWeight.w400,
-                          ),
-                        ),
-                      ],
+                      ),
                     )
                   ),
                 ) : Container(),
@@ -245,42 +264,90 @@ class Layout extends StatelessWidget {
                         RecreationalDrugs(quiz: quiz),
                         SizedBox(height: sectionGap),
                         MandatoryMedicine(quiz: quiz),
-                        SizedBox(height: sectionGap * 0.75),
+                        SizedBox(height: sectionGap),
                         Flex(
-                          direction: Axis.horizontal,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Flexible(
-                              child: ConstrainedBox(
-                                  constraints: BoxConstraints(
-                                    maxWidth: 320,
-                                  ),
-                                  child: ElevatedButton(
-                                    onPressed: () => onShare(context),
-                                    child: const Text(
-                                        'SHARE RESULTS',
-                                        style: TextStyle(
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w300,
-                                        )
+                            direction: Axis.horizontal,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Flexible(
+                                child: ConstrainedBox(
+                                    constraints: BoxConstraints(
+                                      maxWidth: 320,
                                     ),
-                                    style: ButtonStyle(
-                                        backgroundColor: MaterialStateProperty.all(Colors.black),
-                                        foregroundColor: MaterialStateProperty.all(Colors.white),
-                                        minimumSize: MaterialStateProperty.all(Size(double.infinity, 54)),
-                                        shadowColor: MaterialStateProperty.all(Colors.transparent),
-                                        shape: MaterialStateProperty.all(
-                                            RoundedRectangleBorder(
-                                                borderRadius: BorderRadius.circular(100)
-                                            )
-                                        )
+                                    child: ElevatedButton(
+                                      onPressed: () => onReset(context),
+                                      child: Text(
+                                          savedDocument == null ? 'RETAKE QUIZ' : 'TAKE QUIZ',
+                                          style: TextStyle(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w300,
+                                          )
+                                      ),
+                                      style: ButtonStyle(
+                                          minimumSize: MaterialStateProperty.all(Size(double.infinity, 54)),
+                                          shadowColor: MaterialStateProperty.all(Colors.transparent),
+                                          shape: MaterialStateProperty.all(
+                                              RoundedRectangleBorder(
+                                                  borderRadius: BorderRadius.circular(100)
+                                              )
+                                          )
+                                      ),
+                                    )
+                                ),
+                              )
+                            ]
+                        ),
+                        savedDocument == null ? SizedBox(height: 20) : Container(),
+                        savedDocument == null ? Flex(
+                            direction: Axis.horizontal,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Flexible(
+                                child: ConstrainedBox(
+                                    constraints: BoxConstraints(
+                                      maxWidth: 320,
                                     ),
-                                  )
+                                    child: ElevatedButton(
+                                      onPressed: () => onShare(context),
+                                      child: const Text(
+                                          'SHARE RESULTS',
+                                          style: TextStyle(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w300,
+                                          )
+                                      ),
+                                      style: ButtonStyle(
+                                          backgroundColor: MaterialStateProperty.all(Colors.black),
+                                          foregroundColor: MaterialStateProperty.all(Colors.white),
+                                          minimumSize: MaterialStateProperty.all(Size(double.infinity, 54)),
+                                          shadowColor: MaterialStateProperty.all(Colors.transparent),
+                                          shape: MaterialStateProperty.all(
+                                              RoundedRectangleBorder(
+                                                  borderRadius: BorderRadius.circular(100)
+                                              )
+                                          )
+                                      ),
+                                    )
+                                ),
+                              ),
+                            ]
+                        ) : Container(),
+                        SizedBox(height: 48),
+                        Center(
+                          child: MouseRegion(
+                            cursor: SystemMouseCursors.click,
+                            child: GestureDetector(
+                              onTap: () {
+                                launchUrlString('https://github.com/fyrware/liberty_compass');
+                              },
+                              child: Image(
+                                image: AssetImage('assets/images/github.png'),
+                                height: 40,
+                                filterQuality: FilterQuality.medium,
                               ),
                             ),
-                          ]
-                        ),
-                        SizedBox(height: sectionGap),
+                          ),
+                        )
                       ]
                     )
                   )
@@ -295,11 +362,14 @@ class Layout extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Header(
-            ready: ready,
-            started: started,
-            quiz: quiz,
-            results: savedDocument
+          quiz: quiz,
+          ready: ready,
+          started: started,
+          results: savedDocument,
+          onStart: onStart,
+          onReset: onReset,
         ),
+        titleSpacing: 0,
         shadowColor: Colors.transparent,
       ),
       body: Container(
@@ -318,17 +388,12 @@ class Layout extends StatelessWidget {
                 constraints: BoxConstraints(
                   maxWidth: 640,
                 ),
-                decoration: BoxDecoration(
-                    image: DecorationImage(
-                        image: AssetImage('assets/images/question.png'),
-                        filterQuality: FilterQuality.medium,
-                        fit: BoxFit.contain,
-                        alignment: Alignment.bottomCenter
-                    )
-                ),
                 child: SingleChildScrollView(
                     child: Container(
-                      padding: const EdgeInsets.all(32),
+                      padding: EdgeInsets.symmetric(
+                          horizontal: 32,
+                          vertical: isMobile ? 32 :  48
+                      ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -337,7 +402,8 @@ class Layout extends StatelessWidget {
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: 18,
-                              fontWeight: FontWeight.w600,
+                              height: 1.5,
+                              fontWeight: FontWeight.w500,
                             ),
                           ),
                           SizedBox(height: 24),
@@ -345,10 +411,10 @@ class Layout extends StatelessWidget {
                               color: Colors.transparent,
                               child: ListTile(
                                 visualDensity: VisualDensity.compact,
-                                tileColor: Colors.transparent,
-                                hoverColor: Colors.white.withOpacity(0.166),
+                                tileColor: answer == selectedAnswer ? Colors.white.withOpacity(0.25) : Colors.transparent,
+                                hoverColor: answer == selectedAnswer ? Colors.transparent : Colors.white.withOpacity(0.1),
                                 shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(4),
+                                  borderRadius: BorderRadius.circular(100),
                                 ),
                                 title: Text(
                                     answer.content,
@@ -373,7 +439,7 @@ class Layout extends StatelessWidget {
                           Center(
                             child: ConstrainedBox(
                                 constraints: BoxConstraints(
-                                  maxWidth: 320,
+                                  maxWidth: isMobile ? double.infinity : 320,
                                 ),
                                 child: ElevatedButton(
                                   onPressed: selectedAnswer != null ? () => onAnswerSubmit(selectedAnswer!) : null,
@@ -387,6 +453,12 @@ class Layout extends StatelessWidget {
                                   style: ButtonStyle(
                                     minimumSize: MaterialStateProperty.all(Size(double.infinity, 54)),
                                     shadowColor: MaterialStateProperty.all(Colors.transparent),
+                                    foregroundColor: MaterialStateProperty.resolveWith((states) {
+                                      if (states.contains(MaterialState.disabled)) {
+                                        return Colors.black.withOpacity(0.66);
+                                      }
+                                      return Colors.black;
+                                    }),
                                     backgroundColor: MaterialStateProperty.resolveWith((states) {
                                       if (states.contains(MaterialState.disabled)) {
                                         return Colors.white.withOpacity(0.25);
@@ -402,7 +474,19 @@ class Layout extends StatelessWidget {
                                 )
                             ),
                           ),
-                          SizedBox(height: isMobile ? 280 : 400),
+                          SizedBox(height: isMobile ? 32 : 48),
+                          Container(
+                            width: double.infinity,
+                            height: isMobile ? 200 : 300,
+                            decoration: BoxDecoration(
+                                image: DecorationImage(
+                                    image: AssetImage('assets/images/question.png'),
+                                    filterQuality: FilterQuality.medium,
+                                    fit: BoxFit.contain,
+                                    // alignment: Alignment.bottomCenter
+                                )
+                            ),
+                          )
                         ],
                       ),
                     )

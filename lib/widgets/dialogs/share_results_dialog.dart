@@ -6,10 +6,12 @@ import 'package:liberty_compass/utils.dart';
 class ShareResultsDialog extends StatefulWidget {
     final Quiz quiz;
     final Function(DocumentReference) onContinue;
+    final Function(BuildContext) onCopy;
 
     const ShareResultsDialog({
         required this.quiz,
         required this.onContinue,
+        required this.onCopy,
         Key? key,
     }) : super(key: key);
 
@@ -48,10 +50,16 @@ class ShareResultsDialogState extends State<ShareResultsDialog> {
         widget.onContinue(document);
     }
 
+    void handleCopyTap(BuildContext context) {
+        widget.onCopy(context);
+        Navigator.pop(context);
+    }
+
     @override
     Widget build(BuildContext context) {
         final mediaQuery = MediaQuery.of(context);
         final isMobile = mediaQuery.size.width < 600;
+        final isMini = mediaQuery.size.width < 300;
 
         return SimpleDialog(
             elevation: 0,
@@ -112,10 +120,10 @@ class ShareResultsDialogState extends State<ShareResultsDialog> {
                             SizedBox(height: 16),
                             Container(
                                 width: double.infinity,
-                                height: isMobile ? 180 : 240,
+                                height: isMini ? 140 : isMobile ? 180 : 240,
                                 decoration: BoxDecoration(
                                     image: DecorationImage(
-                                        image: AssetImage('assets/images/share.png'),
+                                        image: AssetImage(resultsId == '' ? 'assets/images/share.png' : 'assets/images/success.png'),
                                         filterQuality: FilterQuality.medium,
                                         fit: BoxFit.contain
                                     )
@@ -127,7 +135,7 @@ class ShareResultsDialogState extends State<ShareResultsDialog> {
                                 constraints: BoxConstraints(maxWidth: 420),
                                 padding: EdgeInsets.symmetric(
                                     vertical: 16,
-                                    horizontal: isMobile ? 32 : 48
+                                    horizontal: isMini ? 20 : isMobile ? 32 : 48
                                 ),
                                 child: Column(
                                     children: resultsId == ''
@@ -135,7 +143,7 @@ class ShareResultsDialogState extends State<ShareResultsDialog> {
                                             SizedBox(
                                                 width: double.infinity,
                                                 child: SelectableText(
-                                                    'Sharing your results requires that we save your answers to our database. We do not collect or save any data other than the answers you\'ve selected. Would you like to continue?',
+                                                    'Sharing your quiz with others requires that we save your answers to our database. We do not collect or save any data other than the answers you\'ve selected. Would you like to continue?',
                                                     style: TextStyle(
                                                         color: Colors.white,
                                                         fontSize: isMobile ? 15 : 17,
@@ -144,7 +152,7 @@ class ShareResultsDialogState extends State<ShareResultsDialog> {
                                                     )
                                                 ),
                                             ),
-                                            SizedBox(height: 32),
+                                            SizedBox(height: isMobile ? 24 : 32),
                                             Flex(
                                                 direction: Axis.horizontal,
                                                 mainAxisAlignment: MainAxisAlignment.center,
@@ -184,7 +192,7 @@ class ShareResultsDialogState extends State<ShareResultsDialog> {
                                             SizedBox(
                                                 width: double.infinity,
                                                 child: SelectableText(
-                                                    'All set! Use the link below to access your results. There is no guarantee on how long your results may be saved for, so consider also taking a screenshot of your graph.',
+                                                    'All set! Use the link below to access your results. There is no guarantee on how long your results may be saved for, so consider also taking a screenshot of your compass.',
                                                     style: TextStyle(
                                                         color: Colors.white,
                                                         fontSize: isMobile ? 15 : 17,
@@ -201,6 +209,7 @@ class ShareResultsDialogState extends State<ShareResultsDialog> {
                                                             autofocus: true,
                                                             readOnly: true,
                                                             controller: urlTextController,
+                                                            onTap: () => handleCopyTap(context),
                                                             style: TextStyle(
                                                                 color: Colors.white
                                                             ),
@@ -218,7 +227,7 @@ class ShareResultsDialogState extends State<ShareResultsDialog> {
                                                         )
                                                     ),
                                                     ElevatedButton(
-                                                        onPressed: () {},
+                                                        onPressed: () => handleCopyTap(context),
                                                         style: ButtonStyle(
                                                             backgroundColor: MaterialStateProperty.all(Colors.black),
                                                             foregroundColor: MaterialStateProperty.all(Colors.white),

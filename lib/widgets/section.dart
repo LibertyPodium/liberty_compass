@@ -3,14 +3,14 @@ import 'package:flutter/material.dart';
 class Section extends StatelessWidget {
     final String icon;
     final String title;
-    final int sentiment;
+    final int? sentiment;
     final List<Widget> children;
 
     const Section({
-        required this.icon,
         required this.title,
-        required this.sentiment,
-        required this.children,
+        this.icon = '',
+        this.sentiment,
+        this.children = const [],
         Key? key
     }) : super(key: key);
 
@@ -21,20 +21,20 @@ class Section extends StatelessWidget {
         final iconSize = isMobile ? 40.0 : 64.0;
 
         final sentimentOperator = sentiment == 0
-            ? Icons.close
-            : sentiment < 0
+            ? Icons.multiple_stop
+            : sentiment != null && sentiment! < 0
                 ? Icons.remove
                 : Icons.add;
 
         final sentimentIcon = sentiment == 0
             ? Icons.sentiment_neutral_rounded
-            : sentiment < 0
+            : sentiment != null && sentiment! < 0
                 ? Icons.sentiment_dissatisfied_rounded
                 : Icons.sentiment_satisfied_alt_rounded;
 
         final sentimentColor = sentiment == 0
             ? Colors.white.withOpacity(0.5)
-            : sentiment < 0
+            : sentiment != null && sentiment! < 0
                 ? Colors.deepOrange
                 : Colors.green;
 
@@ -50,7 +50,7 @@ class Section extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
-                            Opacity(
+                            icon.isNotEmpty ? Opacity(
                                 opacity: 0.25,
                                 child: Container(
                                     width: iconSize,
@@ -63,8 +63,8 @@ class Section extends StatelessWidget {
                                         )
                                     ),
                                 )
-                            ),
-                            const SizedBox(width: 16),
+                            ) : Container(),
+                            SizedBox(width: icon.isNotEmpty ? 16 : 0),
                             Expanded(
                                 child: Column(
                                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -86,7 +86,7 @@ class Section extends StatelessWidget {
                                                         ),
                                                         child: Row(
                                                             crossAxisAlignment: CrossAxisAlignment.center,
-                                                            children: [
+                                                            children: sentiment != null ? [
                                                                 Expanded(
                                                                     child: SelectableText(title,
                                                                         style: const TextStyle(
@@ -107,6 +107,16 @@ class Section extends StatelessWidget {
                                                                     color: sentimentColor,
                                                                     size: 28,
                                                                 )
+                                                            ] : [
+                                                              Expanded(
+                                                                child: SelectableText(title,
+                                                                    style: const TextStyle(
+                                                                      color: Colors.white,
+                                                                      fontSize: 20,
+                                                                      fontWeight: FontWeight.w500,
+                                                                    )
+                                                                ),
+                                                              ),
                                                             ]
                                                         )
                                                     ))

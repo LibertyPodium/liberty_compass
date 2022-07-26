@@ -1,5 +1,18 @@
 import 'package:liberty_compass/quiz/question.dart';
 
+enum SentimentKind {
+    individualFreedom,
+    nationalSecurity,
+    rightToBearArms,
+    immigration,
+    parentalRights,
+    freedomOfSpeech,
+    freedomOfReligion,
+    taxation,
+    recreationalDrugs,
+    mandatoryMedicine
+}
+
 class Sentiment {
   int liberty;
   int nationalSecurity;
@@ -35,6 +48,21 @@ class Sentiment {
     this.mandatoryMedicine = 0,
     this.immigration = 0
   });
+
+  int get(SentimentKind kind) {
+    switch (kind) {
+      case SentimentKind.individualFreedom: return liberty;
+      case SentimentKind.nationalSecurity: return nationalSecurity;
+      case SentimentKind.rightToBearArms: return rightToBearArms;
+      case SentimentKind.immigration: return immigration;
+      case SentimentKind.parentalRights: return parentalRights;
+      case SentimentKind.freedomOfSpeech: return freeSpeech;
+      case SentimentKind.freedomOfReligion: return freedomOfReligion;
+      case SentimentKind.taxation: return taxes;
+      case SentimentKind.recreationalDrugs: return drugLegalization;
+      case SentimentKind.mandatoryMedicine: return mandatoryMedicine;
+    }
+  }
 
   Map<String, dynamic> toMap() {
       return {
@@ -109,7 +137,7 @@ class Sentiment {
         case 'Freedom of Religion': sentiment.freedomOfReligion += whichSentimentScore; break;
         case 'Right to Bear Arms': sentiment.rightToBearArms += whichSentimentScore; break;
         case 'Free Speech': sentiment.freeSpeech += whichSentimentScore; break;
-        case 'Parental Responsibility': sentiment.parentalRights += whichSentimentScore; break;
+        case 'Parental Rights': sentiment.parentalRights += whichSentimentScore; break;
         case 'Taxes': sentiment.taxes += whichSentimentScore; break;
         case 'Mandatory Medicine': sentiment.mandatoryMedicine += whichSentimentScore; break;
         case 'Immigration': sentiment.immigration += whichSentimentScore; break;

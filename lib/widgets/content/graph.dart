@@ -138,9 +138,10 @@ class GraphPainter extends CustomPainter {
     final centerX = center[0];
     final centerY = center[1];
 
-    final progressivePercentage = quiz.score.progressive / (quiz.questions.length * 2);
-    final conservativePercentage = quiz.score.conservative / (quiz.questions.length * 2);
-    final libertarianPercentage = quiz.score.libertarian / (quiz.questions.length * 2);
+    final minimumPercentage = quiz.questions.length * 0.33;
+    final progressivePercentage = (quiz.score.progressive < minimumPercentage ? minimumPercentage : quiz.score.progressive) / (quiz.questions.length * 2);
+    final conservativePercentage = (quiz.score.conservative < minimumPercentage ? minimumPercentage : quiz.score.conservative) / (quiz.questions.length * 2);
+    final libertarianPercentage = (quiz.score.libertarian < minimumPercentage ? minimumPercentage : quiz.score.libertarian) / (quiz.questions.length * 2);
 
     final progressiveX = (0 - centerX) * progressivePercentage + centerX;
     final progressiveY = (0 - centerY) * progressivePercentage + centerY;
@@ -353,9 +354,11 @@ class GraphPainter extends CustomPainter {
 
 class Graph extends StatelessWidget {
   final Quiz quiz;
+  final double? size;
 
   const Graph({
     required this.quiz,
+    this.size,
     Key? key
   }) : super(key: key);
 
@@ -363,16 +366,17 @@ class Graph extends StatelessWidget {
   Widget build(BuildContext context) {
     final mediaQuery = MediaQuery.of(context);
     final isMobile = mediaQuery.size.width < 600;
+    final isMini = mediaQuery.size.width < 300;
     final isEmpty = quiz.score.conservative == 0 && quiz.score.libertarian == 0 && quiz.score.progressive == 0;
-    final size = isEmpty ? 100.0 : isMobile ? 250.0 : 380.0;
+    final renderSize = size != null ? size! : isEmpty ? 100.0 : isMini ? 175.0 : isMobile ? 250.0 : 380.0;
 
     if (isEmpty) {
       return SizedBox(
-          width: size,
-          height: size * cos(30 * pi / 180),
+          width: renderSize,
+          height: renderSize * cos(30 * pi / 180),
           child: CustomPaint(
             painter: GraphPainter(
-                size: size,
+                size: renderSize,
                 quiz: quiz
             ),
           )
@@ -380,7 +384,7 @@ class Graph extends StatelessWidget {
     }
 
     return Container(
-      width: size + (isMobile ? 64 : 128),
+      width: renderSize + (isMobile ? 64 : 128),
       child: UnconstrainedBox(
         alignment: Alignment.topLeft,
         child: Container(
@@ -391,7 +395,7 @@ class Graph extends StatelessWidget {
                 direction: Axis.horizontal,
                 children: [
                   SizedBox(
-                    width: size,
+                    width: renderSize,
                     child: Wrap(
                       children: [
                         Flex(
@@ -443,17 +447,17 @@ class Graph extends StatelessWidget {
               ),
               SizedBox(height: 10),
               Container(
-                  width: size + 32,
-                  height: size * cos(30 * pi / 180) + 20,
+                  width: renderSize + 32,
+                  height: renderSize * cos(30 * pi / 180) + 20,
                   child: CustomPaint(
                       painter: GraphPainter(
-                          size: size,
+                          size: renderSize,
                           quiz: quiz
                       ),
                   )
               ),
               SizedBox(
-                  width: size,
+                  width: renderSize,
                   child: Center(
                       child: Transform(
                         transform: isMobile ? Matrix4.translationValues(-0, -5, 0) : Matrix4.translationValues(-30, -8, 0),

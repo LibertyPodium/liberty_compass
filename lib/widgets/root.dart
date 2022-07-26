@@ -1,43 +1,46 @@
-import 'dart:html' as html;
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:liberty_compass/widgets/dialogs/share_results_dialog.dart';
+import 'package:flutter/services.dart';
 
-import '../utils.dart';
 import '../quiz/answer.dart';
 import '../quiz/quiz.dart';
+import '../utils.dart';
+
+import './dialogs/help_dialog.dart';
+import './dialogs/reset_warning_dialog.dart';
+import './dialogs/share_results_dialog.dart';
 import './layout.dart';
 
 class Root extends StatefulWidget {
-  final Map<String, String> parameters;
+    final String resultsId;
 
-  const Root({required this.parameters, Key? key}) : super(key: key);
+    const Root({
+        required this.resultsId,
+        Key? key
+    }) : super(key: key);
 
-  @override
-  RootState createState() => RootState();
+    @override
+    RootState createState() => RootState();
 }
 
 class RootState extends State<Root> with SingleTickerProviderStateMixin {
     Quiz quiz = Quiz('quiz_questions.csv');
     bool ready = false;
     bool started = false;
-    bool saving = false;
+    String resultsId = '';
     Answer? selectedAnswer;
     DocumentReference? savedDocument;
 
-    late final AnimationController loadingAnimationController = AnimationController(
+    late final AnimationController loadingAnimation = AnimationController(
         duration: const Duration(milliseconds: 1500),
         vsync: this
     )..repeat();
 
-    @override
-    void initState() {
-        super.initState();
+    void initQuiz() {
         quiz.setupQuestions().then((_) {
-            if (widget.parameters.containsKey('results')) {
-                setUrlToResultsPage(widget.parameters['results']!);
-                quiz.lookupResults(widget.parameters['results']!).then((document) {
+            if (resultsId.isNotEmpty) {
+                setUrlToResultsPage(resultsId);
+                quiz.lookupResults(resultsId).then((document) {
                     Future.delayed(const Duration(milliseconds: 1250), () {
                         setState(() {
                             ready = true;
@@ -54,6 +57,53 @@ class RootState extends State<Root> with SingleTickerProviderStateMixin {
                 });
             }
         });
+    }
+
+    @override
+    void initState() {
+        resultsId = widget.resultsId;
+
+        precacheImage(const AssetImage('assets/images/logo.png'), context);
+        precacheImage(const AssetImage('assets/images/github.png'), context);
+        precacheImage(const AssetImage('assets/images/intro.png'), context);
+        precacheImage(const AssetImage('assets/images/question.png'), context);
+        precacheImage(const AssetImage('assets/images/share.png'), context);
+        precacheImage(const AssetImage('assets/images/success.png'), context);
+
+        super.initState();
+        initQuiz();
+    }
+
+    void resetState() {
+        setState(() {
+            quiz = Quiz(quiz.src);
+            ready = false;
+            started = false;
+            resultsId = '';
+            selectedAnswer = null;
+            savedDocument = null;
+        });
+        resetUrl();
+        initQuiz();
+    }
+
+    void handleReset(BuildContext context) {
+        if (savedDocument == null) {
+            showDialog(
+                context: context,
+                builder: buildResetWarningDialog
+            ).then((shouldReset) {
+                if (shouldReset == true) {
+                    resetState();
+                }
+            });
+        } else {
+            resetState();
+        }
+    }
+
+    void handleResetAccept() {
+        resetState();
     }
 
     void handleStart() {
@@ -76,21 +126,75 @@ class RootState extends State<Root> with SingleTickerProviderStateMixin {
         });
     }
 
+    void handleShare(BuildContext context) {
+        showDialog(
+            context: context,
+            builder: buildShareResultsDialog
+        );
+    }
+
     void handleShareContinue(DocumentReference document) {
         setState(() {
             savedDocument = document;
         });
     }
 
-    void handleShare(BuildContext context) {
+    void handleCopyUrl(BuildContext context) {
+        final url = getUrlToResultsPage(savedDocument!.id);
+        final scaffold = ScaffoldMessenger.of(context);
+
+        Clipboard.setData(ClipboardData(text: url));
+        scaffold.showSnackBar(buildCopySuccessSnackbar(context) as SnackBar);
+    }
+
+    void handleHelp(BuildContext context) {
         showDialog(
             context: context,
-            builder: (context) {
-                return ShareResultsDialog(
-                    quiz: quiz,
-                    onContinue: handleShareContinue
-                );
-            }
+            builder: buildHelpDialog
+        );
+    }
+
+    Widget buildResetWarningDialog(BuildContext context) {
+        return ResetWarningDialog(
+            quiz: quiz,
+            onAccept: handleResetAccept
+        );
+    }
+
+    Widget buildShareResultsDialog(BuildContext context) {
+        return ShareResultsDialog(
+            quiz: quiz,
+            onContinue: handleShareContinue,
+            onCopy: handleCopyUrl
+        );
+    }
+
+    Widget buildHelpDialog(BuildContext context) {
+        return HelpDialog(
+            quiz: quiz
+        );
+    }
+
+    Widget buildCopySuccessSnackbar(BuildContext context) {
+        return SnackBar(
+            backgroundColor: Colors.green,
+            padding: const EdgeInsets.symmetric(
+                vertical: 18,
+                horizontal: 24
+            ),
+            content: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: const [
+                    Text(
+                        'RESULTS URL COPIED',
+                        style: TextStyle(
+                            color: Colors.black,
+                            fontWeight: FontWeight.w300,
+                            fontSize: 17
+                        ),
+                    ),
+                ],
+            )
         );
     }
 
@@ -102,19 +206,22 @@ class RootState extends State<Root> with SingleTickerProviderStateMixin {
             themeMode: ThemeMode.dark,
             theme: ThemeData(
                 primarySwatch: Colors.amber,
+                canvasColor: Colors.transparent
             ),
             home: Layout(
-                loadingAnimationController: loadingAnimationController,
                 quiz: quiz,
                 started: started,
                 ready: ready,
-                saving: saving,
+                selectedAnswer: selectedAnswer,
+                savedDocument: savedDocument,
+                loadingAnimation: loadingAnimation,
                 onStart: handleStart,
+                onReset: handleReset,
+                onShare: handleShare,
+                onHelp: handleHelp,
+                onCopy: handleCopyUrl,
                 onAnswerSubmit: handleAnswerSubmit,
                 onAnswerSelect: handleAnswerSelect,
-                onShare: handleShare,
-                selectedAnswer: selectedAnswer,
-                savedDocument: savedDocument
             ),
         );
     }

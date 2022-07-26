@@ -43,7 +43,7 @@ class Introduction extends StatelessWidget {
             height: isMobile ? 200 : 320,
             decoration: BoxDecoration(
                 image: DecorationImage(
-                    image: AssetImage('assets/images/campfire.png'),
+                    image: AssetImage('assets/images/intro.png'),
                     filterQuality: FilterQuality.medium,
                     fit: BoxFit.contain
                 )
@@ -98,7 +98,7 @@ class Introduction extends StatelessWidget {
               'PROGRESSIVE',
               style: TextStyle(
                 color: Colors.deepOrange,
-                fontSize: 12,
+                fontSize: 13,
                 fontWeight: FontWeight.w800,
               )
           ),
@@ -107,7 +107,7 @@ class Introduction extends StatelessWidget {
               'Policies which tend to favor social welfare programs, or policies which favor equitable outcomes are generally considered progressive. ' +
                   'This may include policies such as universal health care, universal basic income, and lax immigration laws.',
               style: TextStyle(
-                  color: Colors.white.withOpacity(0.7),
+                  color: Colors.white.withOpacity(0.75),
                   fontSize: 13,
                   fontWeight: FontWeight.w300,
                   height: 1.5
@@ -118,7 +118,7 @@ class Introduction extends StatelessWidget {
               'CONSERVATIVE',
               style: TextStyle(
                 color: Colors.lightBlue,
-                fontSize: 12,
+                fontSize: 13,
                 fontWeight: FontWeight.w800,
               )
           ),
@@ -127,7 +127,7 @@ class Introduction extends StatelessWidget {
               'Policies which tend to favor traditional values, or policies which favor economic prosperity are generally considered conservative. ' +
                   'This may include policies such as lower taxes, banning abortion, and strong immigration laws.',
               style: TextStyle(
-                  color: Colors.white.withOpacity(0.7),
+                  color: Colors.white.withOpacity(0.75),
                   fontSize: 13,
                   fontWeight: FontWeight.w300,
                   height: 1.5
@@ -138,7 +138,7 @@ class Introduction extends StatelessWidget {
               'LIBERTARIAN',
               style: TextStyle(
                 color: Colors.amber,
-                fontSize: 12,
+                fontSize: 13,
                 fontWeight: FontWeight.w800,
               )
           ),
@@ -148,7 +148,7 @@ class Introduction extends StatelessWidget {
                   'Many political perspectives are miscategorized as being progressive or conservative, and are actually libertarian. ' +
                   'For example, both progressives and libertarians support lax immigration laws, while both conservatives and libertarians support lower taxes.',
               style: TextStyle(
-                  color: Colors.white.withOpacity(0.7),
+                  color: Colors.white.withOpacity(0.75),
                   fontSize: 13,
                   fontWeight: FontWeight.w300,
                   height: 1.5
