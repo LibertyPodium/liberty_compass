@@ -125,7 +125,7 @@ class Sentiment {
 
     for (int whichSentiment = 0; whichSentiment < sentimentTextSplit.length; ++whichSentiment) {
       final String whichSentimentText = sentimentTextSplit[whichSentiment];
-      final List<String> whichSentimentSplit = whichSentimentText.split(RegExp(r"(\s)(?=[+-]$)"));
+      final List<String> whichSentimentSplit = whichSentimentText.split(RegExp(r"(\s)(?=[+-](?:$|\n|\r))"));
       final String whichSentimentName = whichSentimentSplit[0];
       final String whichSentimentValue = whichSentimentSplit[1];
       final int whichSentimentScore = whichSentimentValue == '+' ? 1 : -1;

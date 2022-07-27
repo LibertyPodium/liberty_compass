@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 
 import '../../quiz/quiz.dart';
 import '../../quiz/sentiment.dart';
-import '../listing.dart';
-import '../section.dart';
+import '../layout/listing.dart';
+import '../layout/section.dart';
 
 class MandatoryMedicine extends StatelessWidget {
     final Quiz quiz;

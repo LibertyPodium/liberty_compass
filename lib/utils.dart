@@ -18,7 +18,7 @@ void setUrlToResultsPage(String id) {
     html.window.history.pushState(
         null,
         html.document.title,
-        '?results=$id'
+        '${html.window.location.origin}${html.window.location.pathname}?results=$id'
     );
 }
 
@@ -27,6 +27,6 @@ void resetUrl() {
     html.window.history.pushState(
         null,
         html.document.title,
-        '/'
+        '${html.window.location.origin}${html.window.location.pathname}'
     );
 }

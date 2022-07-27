@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:liberty_compass/quiz/quiz.dart';
 
 import '../content/graph.dart';
-import '../section.dart';
+import '../layout/section.dart';
 
 class HelpDialog extends StatefulWidget {
   final Quiz quiz;

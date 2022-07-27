@@ -15,7 +15,8 @@ This quiz attempts to categorize your political perspective by gauging your favo
 ### Attribution
 - Illustrations: https://storyset.com/
 - Topic Icons: https://thenounproject.com/
+- File Converter: https://convertio.co/
 
 ### Useful Links
-- [YouTube: Government is magic](ABB-lScOoSk)<br/>
+- [YouTube: Government is magic](https://youtu.be/ABB-lScOoSk)<br/>
   [![Watch the video](https://img.youtube.com/vi/ABB-lScOoSk/default.jpg)](https://youtu.be/ABB-lScOoSk)

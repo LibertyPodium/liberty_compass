@@ -102,7 +102,9 @@ class ResetWarningDialogState extends State<ResetWarningDialog> {
                         SizedBox(
                           width: double.infinity,
                           child: SelectableText(
-                              'You have not shared your quiz results. If you navigate away now you will lose all of your progress. Do you accept?',
+                              widget.quiz.isComplete
+                                  ? 'You have not shared your quiz results. If you navigate away now you will lose all of your progress. Do you accept?'
+                                  : 'You have not completed the quiz yet. If you navigate away now you will lose all of your progress. Do you accept?',
                               style: TextStyle(
                                   color: Colors.white,
                                   fontSize: isMobile ? 15 : 17,

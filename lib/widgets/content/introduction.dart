@@ -108,7 +108,7 @@ class Introduction extends StatelessWidget {
                   'This may include policies such as universal health care, universal basic income, and lax immigration laws.',
               style: TextStyle(
                   color: Colors.white.withOpacity(0.75),
-                  fontSize: 13,
+                  fontSize: 14,
                   fontWeight: FontWeight.w300,
                   height: 1.5
               )
@@ -128,7 +128,7 @@ class Introduction extends StatelessWidget {
                   'This may include policies such as lower taxes, banning abortion, and strong immigration laws.',
               style: TextStyle(
                   color: Colors.white.withOpacity(0.75),
-                  fontSize: 13,
+                  fontSize: 14,
                   fontWeight: FontWeight.w300,
                   height: 1.5
               )
@@ -149,7 +149,7 @@ class Introduction extends StatelessWidget {
                   'For example, both progressives and libertarians support lax immigration laws, while both conservatives and libertarians support lower taxes.',
               style: TextStyle(
                   color: Colors.white.withOpacity(0.75),
-                  fontSize: 13,
+                  fontSize: 14,
                   fontWeight: FontWeight.w300,
                   height: 1.5
               )

@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 
 import '../../quiz/quiz.dart';
 import '../../quiz/sentiment.dart';
-import '../listing.dart';
-import '../section.dart';
+import '../layout/listing.dart';
+import '../layout/section.dart';
 
 class Immigration extends StatelessWidget {
     final Quiz quiz;
@@ -22,7 +22,7 @@ class Immigration extends StatelessWidget {
         } else if (quiz.sentiment.immigration < 0) {
             descriptionWithSentiment = 'You are generally disagreeable towards immigration. You believe that government should prioritize its citizens.';
         } else {
-            descriptionWithSentiment = 'You are generally favorable towards immigration. You believe that people should be allowed toi live where they feel most free.';
+            descriptionWithSentiment = 'You are generally favorable towards immigration. You believe that people should be allowed to live where they feel most free.';
         }
 
         return Section(

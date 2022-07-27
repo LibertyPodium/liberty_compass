@@ -26,6 +26,8 @@ class Quiz {
     int get currentPlace => _place;
     Question? get currentQuestion => _place < questions.length ? questions[_place] : null;
 
+    bool get isComplete => _place > 0 && _place == questions.length;
+
     Quiz(this.src) {
         score = Score(this);
     }
@@ -82,18 +84,17 @@ class Quiz {
             options: DefaultFirebaseOptions.currentPlatform,
         );
 
-        final quizQuestionsCsv = await rootBundle.loadString(src);
-        final quizQuestionsRows = const CsvToListConverter().convert(quizQuestionsCsv, eol: '\n');
-        final quizQuestionsCount = quizQuestionsRows.length;
+        final csv = await rootBundle.loadString(src);
+        final rows = const CsvToListConverter().convert(csv, eol: '\n');
 
-        for (int whichQuestion = 1; whichQuestion < quizQuestionsCount; ++whichQuestion) {
-            final List questionColumns = quizQuestionsRows[whichQuestion];
+        for (int whichQuestion = 1; whichQuestion < rows.length; ++whichQuestion) {
+            final List questionColumns = rows[whichQuestion];
             final String questionText = questionColumns[0];
             final String questionSentimentText = questionColumns[questionColumns.length - 1];
             final List<Answer> questionAnswers = [];
 
-            for (int whichAnswer = 1; whichAnswer < quizQuestionsRows[whichQuestion].length - 1; ++whichAnswer) {
-                final String scoreText = quizQuestionsRows[whichQuestion][whichAnswer];
+            for (int whichAnswer = 1; whichAnswer < rows[whichQuestion].length - 1; ++whichAnswer) {
+                final String scoreText = rows[whichQuestion][whichAnswer];
 
                 questionAnswers.add(
                     Answer(

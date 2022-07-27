@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:liberty_compass/widgets/screens/question_screen.dart';
+import 'package:liberty_compass/widgets/screens/results_screen.dart';
 
 import '../quiz/answer.dart';
 import '../quiz/quiz.dart';
@@ -9,7 +11,7 @@ import '../utils.dart';
 import './dialogs/help_dialog.dart';
 import './dialogs/reset_warning_dialog.dart';
 import './dialogs/share_results_dialog.dart';
-import './layout.dart';
+import './screens/landing_screen.dart';
 
 class Root extends StatefulWidget {
     final String resultsId;
@@ -24,7 +26,7 @@ class Root extends StatefulWidget {
 }
 
 class RootState extends State<Root> with SingleTickerProviderStateMixin {
-    Quiz quiz = Quiz('quiz_questions.csv');
+    Quiz quiz = Quiz('assets/quiz_questions.csv');
     bool ready = false;
     bool started = false;
     String resultsId = '';
@@ -88,7 +90,7 @@ class RootState extends State<Root> with SingleTickerProviderStateMixin {
     }
 
     void handleReset(BuildContext context) {
-        if (savedDocument == null) {
+        if (started && savedDocument == null) {
             showDialog(
                 context: context,
                 builder: buildResetWarningDialog
@@ -198,6 +200,43 @@ class RootState extends State<Root> with SingleTickerProviderStateMixin {
         );
     }
 
+    Widget buildLayout(BuildContext context) {
+        if (!started) {
+            return LandingScreen(
+                quiz: quiz,
+                ready: ready,
+                started: started,
+                results: savedDocument,
+                onStart: handleStart,
+                onReset: handleReset,
+                loadingAnimation: loadingAnimation
+            );
+        } else if (!quiz.isComplete) {
+            return QuestionScreen(
+                quiz: quiz,
+                ready: ready,
+                started: started,
+                onStart: handleStart,
+                onReset: handleReset,
+                onAnswerSelect: handleAnswerSelect,
+                onAnswerSubmit: handleAnswerSubmit,
+                selectedAnswer: selectedAnswer
+            );
+        } else {
+            return ResultsScreen(
+                quiz: quiz,
+                ready: ready,
+                started: started,
+                results: savedDocument,
+                onStart: handleStart,
+                onReset: handleReset,
+                onShare: handleShare,
+                onHelp: handleHelp,
+                onCopy: handleCopyUrl
+            );
+        }
+    }
+
     @override
     Widget build(BuildContext context) {
         return MaterialApp(
@@ -208,21 +247,9 @@ class RootState extends State<Root> with SingleTickerProviderStateMixin {
                 primarySwatch: Colors.amber,
                 canvasColor: Colors.transparent
             ),
-            home: Layout(
-                quiz: quiz,
-                started: started,
-                ready: ready,
-                selectedAnswer: selectedAnswer,
-                savedDocument: savedDocument,
-                loadingAnimation: loadingAnimation,
-                onStart: handleStart,
-                onReset: handleReset,
-                onShare: handleShare,
-                onHelp: handleHelp,
-                onCopy: handleCopyUrl,
-                onAnswerSubmit: handleAnswerSubmit,
-                onAnswerSelect: handleAnswerSelect,
-            ),
+            home: Builder(
+                builder: buildLayout
+            )
         );
     }
 }

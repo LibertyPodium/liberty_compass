@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../quiz/question.dart';
-import '../quiz/sentiment.dart';
+import '../../quiz/question.dart';
+import '../../quiz/sentiment.dart';
 
 class Listing extends StatelessWidget {
     final List<Question> sentimentQuestions;
