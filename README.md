@@ -1,4 +1,5 @@
 # Liberty Compass
+
 Political Compass Quiz
 
 **[>> Try it here](https://fyrware.github.io/liberty_compass/)**
@@ -13,10 +14,12 @@ This quiz attempts to categorize your political perspective by gauging your favo
   Policies which tend to favor individual freedom, or simply the lack of policy and governance are generally considered libertarian. Many political perspectives are miscategorized as being progressive or conservative, and are actually libertarian. For example, both progressives and libertarians support lax immigration laws, while both conservatives and libertarians support lower taxes.
 
 ### Attribution
+
 - Illustrations: https://storyset.com/
 - Topic Icons: https://thenounproject.com/
 - File Converter: https://convertio.co/
 
 ### Useful Links
+
 - [YouTube: Government is magic](https://youtu.be/ABB-lScOoSk)<br/>
   [![Watch the video](https://img.youtube.com/vi/ABB-lScOoSk/default.jpg)](https://youtu.be/ABB-lScOoSk)
