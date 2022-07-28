@@ -1,7 +1,8 @@
 import 'dart:math';
+import 'dart:ui';
 
 import 'package:flutter/material.dart';
-import 'package:liberty_compass/quiz.dart';
+import 'package:liberty_compass/quiz/quiz.dart';
 
 class GraphPainter extends CustomPainter {
   final double size;
@@ -84,7 +85,7 @@ class GraphPainter extends CustomPainter {
       ..close();
 
     final paint = Paint()
-      ..color = Colors.white
+      ..color = Color(0xFF262A35)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 2;
 
@@ -104,11 +105,11 @@ class GraphPainter extends CustomPainter {
       ..close();
 
     final fillPaint = Paint()
-      ..color = Colors.white
+      ..color = Color(0xFF262A35)
       ..style = PaintingStyle.fill;
 
     final strokePaint = Paint()
-      ..color = Colors.white
+      ..color = Color(0xFF262A35)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 2;
 
@@ -125,7 +126,7 @@ class GraphPainter extends CustomPainter {
       ..close();
 
     final paint = Paint()
-      ..color = Colors.white
+      ..color = Color(0xFF262A35)
       ..style = PaintingStyle.stroke
       ..strokeJoin = StrokeJoin.round
       ..strokeWidth = 2;
@@ -137,9 +138,10 @@ class GraphPainter extends CustomPainter {
     final centerX = center[0];
     final centerY = center[1];
 
-    final progressivePercentage = quiz.score[QuizVariable.progressive]! / (quiz.questions.length * 2);
-    final conservativePercentage = quiz.score[QuizVariable.conservative]! / (quiz.questions.length * 2);
-    final libertarianPercentage = quiz.score[QuizVariable.libertarian]! / (quiz.questions.length * 2);
+    final minimumPercentage = quiz.questions.length * 0.33;
+    final progressivePercentage = (quiz.score.progressive < minimumPercentage ? minimumPercentage : quiz.score.progressive) / (quiz.questions.length * 2);
+    final conservativePercentage = (quiz.score.conservative < minimumPercentage ? minimumPercentage : quiz.score.conservative) / (quiz.questions.length * 2);
+    final libertarianPercentage = (quiz.score.libertarian < minimumPercentage ? minimumPercentage : quiz.score.libertarian) / (quiz.questions.length * 2);
 
     final progressiveX = (0 - centerX) * progressivePercentage + centerX;
     final progressiveY = (0 - centerY) * progressivePercentage + centerY;
@@ -170,20 +172,20 @@ class GraphPainter extends CustomPainter {
       ..close();
 
     final radarFillPaint = Paint()
-      ..color = const Color(0xFF262A35).withOpacity(0.5)
+      ..color = Colors.white.withOpacity(0.5)
       ..style = PaintingStyle.fill;
 
     final radarStrokePaint = Paint()
-      ..color = const Color(0xFF262A35)
+      ..color = Color(0xFF262A35)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 2;
 
     canvas.drawPath(radarPath, radarFillPaint);
     canvas.drawPath(radarPath, radarStrokePaint);
 
-    const variablePointRadius = 5.0;
+    const variablePointRadius = 6.0;
     final variableOutlinePaint = Paint()
-      ..color = const Color(0xFF262A35)
+      ..color = Color(0xFF262A35)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 2;
 
@@ -225,17 +227,17 @@ class GraphPainter extends CustomPainter {
   }
 
   void paintAuthoritarianMeter(Canvas canvas) {
-    const meterWidth = 20.0;
-    final meterOffset = size + size / 10;
+    const meterWidth = 24.0;
+    final meterOffset = size + size / 12.5;
     final height = size;
-    final meterValue = quiz.authoritarianScore;
+    final meterValue = quiz.score.authoritarian;
 
     final libertarianSectionCap = Path()..addRect(Rect.fromLTWH(meterOffset, height / 2, meterWidth, 10));
     final libertarianSection = Path()
       ..addRRect(
         RRect.fromRectAndRadius(
           Rect.fromLTWH(meterOffset, height / 2, meterWidth, height / 2),
-          Radius.circular(10)
+          Radius.circular(meterWidth / 2)
         )
       );
     final libertarianSectionPaint = Paint()
@@ -247,7 +249,7 @@ class GraphPainter extends CustomPainter {
       ..addRRect(
         RRect.fromRectAndRadius(
           Rect.fromLTWH(meterOffset, 0, meterWidth, height / 2),
-          Radius.circular(10)
+          Radius.circular(meterWidth / 2)
         )
       );
     final authoritarianSectionPaint = Paint()
@@ -262,11 +264,11 @@ class GraphPainter extends CustomPainter {
       ..addRRect(
         RRect.fromRectAndRadius(
           Rect.fromLTWH(meterOffset, 0, meterWidth, height),
-          Radius.circular(10)
+          Radius.circular(meterWidth / 2)
         )
       );
     final meterOutlinePaint = Paint()
-      ..color = Colors.white
+      ..color = Color(0xFF262A35)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 2;
 
@@ -274,18 +276,18 @@ class GraphPainter extends CustomPainter {
     final radarPath =  Path()
       ..addRRect(
         RRect.fromRectAndRadius(
-          Rect.fromLTWH(meterOffset - 5, radarY - 10, meterWidth + 10, 10),
-          Radius.circular(5)
+          Rect.fromLTWH(meterOffset, radarY - (meterValue < 0.5 ? 12 : 0), meterWidth, 12),
+          Radius.circular(6)
         )
       );
 
     final radarStrokePaint = Paint()
-      ..color = const Color(0xFF262A35)
+      ..color = Color(0xFF262A35)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 2;
 
     canvas.save();
-    canvas.translate(size / 10, -height / 2 - 5);
+    canvas.translate(size / 10, -height / 2 - 7);
     canvas.rotate(30 * pi / 180);
     canvas.drawPath(libertarianSectionCap, libertarianSectionPaint);
     canvas.drawPath(libertarianSection, libertarianSectionPaint);
@@ -293,6 +295,37 @@ class GraphPainter extends CustomPainter {
     canvas.drawPath(authoritarianSection, authoritarianSectionPaint);
     canvas.drawPath(meterDividerPath, meterOutlinePaint);
     canvas.drawPath(meterOutlinePath, meterOutlinePaint);
+
+    if (meterValue < 0.5) {
+      final meterValuePath = Path()
+        ..addRRect(RRect.fromRectAndCorners(
+          Rect.fromLTWH(meterOffset + 4, 4, meterWidth - 8, radarY - 8),
+          topLeft: Radius.circular(meterWidth / 2),
+          topRight: Radius.circular(meterWidth / 2),
+        ));
+      final meterValueFill = Paint()
+        ..color = Colors.white.withOpacity(0.5)
+        ..style = PaintingStyle.fill;
+
+      canvas.drawPath(meterValuePath, meterValueFill);
+      canvas.drawPath(meterValuePath, radarStrokePaint);
+    }
+
+    if (meterValue > 0.5) {
+      final meterValuePath = Path()
+        ..addRRect(RRect.fromRectAndCorners(
+          Rect.fromLTWH(meterOffset + 4, radarY + 8, meterWidth - 8, height - radarY - 12),
+          bottomLeft: Radius.circular(meterWidth / 2),
+          bottomRight: Radius.circular(meterWidth / 2),
+        ));
+      final meterValueFill = Paint()
+        ..color = Colors.white.withOpacity(0.5)
+        ..style = PaintingStyle.fill;
+
+      canvas.drawPath(meterValuePath, meterValueFill);
+      canvas.drawPath(meterValuePath, radarStrokePaint);
+    }
+
     canvas.drawPath(radarPath, radarY > height / 2 ? libertarianSectionPaint : authoritarianSectionPaint);
     canvas.drawPath(radarPath, radarStrokePaint);
     canvas.restore();
@@ -306,8 +339,11 @@ class GraphPainter extends CustomPainter {
     paintSectionDividers(canvas);
     paintCentristTriangle(canvas);
     paintTriangleOutline(canvas);
-    paintRadarPoints(canvas);
-    paintAuthoritarianMeter(canvas);
+
+    if (quiz.score.conservative > 0 || quiz.score.libertarian > 0 || quiz.score.progressive > 0) {
+      paintRadarPoints(canvas);
+      paintAuthoritarianMeter(canvas);
+    }
   }
 
   @override
@@ -318,9 +354,11 @@ class GraphPainter extends CustomPainter {
 
 class Graph extends StatelessWidget {
   final Quiz quiz;
+  final double? size;
 
   const Graph({
     required this.quiz,
+    this.size,
     Key? key
   }) : super(key: key);
 
@@ -328,102 +366,117 @@ class Graph extends StatelessWidget {
   Widget build(BuildContext context) {
     final mediaQuery = MediaQuery.of(context);
     final isMobile = mediaQuery.size.width < 600;
-    final size = isMobile ? 250.0 : 380.0;
+    final isMini = mediaQuery.size.width < 300;
+    final isEmpty = quiz.score.conservative == 0 && quiz.score.libertarian == 0 && quiz.score.progressive == 0;
+    final renderSize = size != null ? size! : isEmpty ? 100.0 : isMini ? 175.0 : isMobile ? 250.0 : 380.0;
+
+    if (isEmpty) {
+      return SizedBox(
+          width: renderSize,
+          height: renderSize * cos(30 * pi / 180),
+          child: CustomPaint(
+            painter: GraphPainter(
+                size: renderSize,
+                quiz: quiz
+            ),
+          )
+      );
+    }
 
     return Container(
-      width: size + (isMobile ? 64 : 128),
+      width: renderSize + (isMobile ? 64 : 128),
       child: UnconstrainedBox(
         alignment: Alignment.topLeft,
         child: Container(
-            child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Flex(
+                direction: Axis.horizontal,
                 children: [
-                  Flex(
-                      direction: Axis.horizontal,
-                      children: [
-                        SizedBox(
-                            width: size,
-                            child: Wrap(
-                                children: [
-                                  Flex(
-                                      direction: Axis.horizontal,
-                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Stack(
-                                          children: [
-                                            Text(isMobile ? 'PROG.' : 'PROGRESSIVE',
-                                              style: TextStyle(
-                                                fontSize: 12,
-                                                fontWeight: FontWeight.w800,
-                                                color: Colors.deepOrange,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                        Stack(
-                                          children: [
-                                            Text(isMobile ? 'CONS.' : 'CONSERVATIVE',
-                                              style: TextStyle(
-                                                fontSize: 12,
-                                                fontWeight: FontWeight.w800,
-                                                color: Colors.lightBlue,
-                                              ),
-                                            ),
-                                          ],
-                                        )
-                                      ]
-                                  )
-                                ]
-                            )
-                        ),
-                        Transform(
-                            transform: isMobile ? Matrix4.translationValues(16, 14, 0) : Matrix4.translationValues(18, 18, 0),
-                            child: Stack(
-                              children: [
-                                Text(isMobile ? 'AUTH.' : 'AUTHORITARIAN',
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w800,
-                                    color: Color(0xFFAD65FF),
-                                  ),
-                                ),
-                              ],
-                            )
-                        )
-                      ]
-                  ),
-                  SizedBox(height: 12),
-                  Container(
-                      width: size + 32,
-                      height: size * cos(30 * pi / 180) + 20,
-                      child: CustomPaint(
-                        painter: GraphPainter(
-                            size: size,
-                            quiz: quiz
-                        ),
-                      )
-                  ),
                   SizedBox(
-                      width: size,
-                      child: Center(
-                          child: Transform(
-                            transform: isMobile ? Matrix4.translationValues(-0, -5, 0) : Matrix4.translationValues(-30, -8, 0),
-                            child: Stack(
+                    width: renderSize,
+                    child: Wrap(
+                      children: [
+                        Flex(
+                          direction: Axis.horizontal,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Stack(
                               children: [
-                                Text(isMobile ? 'LIB.' : 'LIBERTARIAN',
+                                Text(isMobile ? 'PROG.' : 'PROGRESSIVE',
                                   style: TextStyle(
                                     fontSize: 12,
                                     fontWeight: FontWeight.w800,
-                                    color: Colors.amber,
+                                    color: Colors.deepOrange,
                                   ),
                                 ),
                               ],
                             ),
-                          )
+                            Stack(
+                              children: [
+                                Text(isMobile ? 'CONS.' : 'CONSERVATIVE',
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w800,
+                                    color: Colors.lightBlue,
+                                  ),
+                                ),
+                              ],
+                            )
+                          ]
+                        )
+                      ]
+                    )
+                  ),
+                  Transform(
+                      transform: isMobile ? Matrix4.translationValues(16, 14, 0) : Matrix4.translationValues(18, 16, 0),
+                      child: Stack(
+                        children: [
+                          Text(isMobile ? 'AUTH.' : 'AUTHORITARIAN',
+                            style: TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w800,
+                              color: Color(0xFFAD65FF),
+                            ),
+                          ),
+                        ],
                       )
                   )
                 ]
-            )
+              ),
+              SizedBox(height: 10),
+              Container(
+                  width: renderSize + 32,
+                  height: renderSize * cos(30 * pi / 180) + 20,
+                  child: CustomPaint(
+                      painter: GraphPainter(
+                          size: renderSize,
+                          quiz: quiz
+                      ),
+                  )
+              ),
+              SizedBox(
+                  width: renderSize,
+                  child: Center(
+                      child: Transform(
+                        transform: isMobile ? Matrix4.translationValues(-0, -5, 0) : Matrix4.translationValues(-30, -8, 0),
+                        child: Stack(
+                          children: [
+                            Text(isMobile ? 'LIB.' : 'LIBERTARIAN',
+                              style: TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w800,
+                                color: Colors.amber,
+                              ),
+                            ),
+                          ],
+                        ),
+                      )
+                  )
+              )
+            ]
+          )
         )
       )
     );
