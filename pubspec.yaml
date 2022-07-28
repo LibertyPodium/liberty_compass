@@ -1,7 +1,7 @@
 name: liberty_compass
 description: Triangle Political Compass
 
-publish_to: 'none'
+publish_to: "none"
 
 version: 2.0.0
 
