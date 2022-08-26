@@ -1,7 +1,7 @@
 # Liberty Compass
 Political Compass Quiz
 
-**[>> Try it here](https://fyrware.github.io/liberty_compass/)**
+**[>> Try it here](https://ndugger.github.io/liberty_compass/)**
 
 This quiz attempts to categorize your political perspective by gauging your favorableness towards propositions of policy and governance. Each proposition will have a specific bias towards one or more of the following categories:
 
